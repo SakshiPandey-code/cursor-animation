@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cursor Trail</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      background: white;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="trailCanvas"></canvas>
+
+  <script>
+    const canvas = document.getElementById('trailCanvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const trail = [];
+    const colors = ['#ff4c4c', '#ff7300', '#ffbb00', '#48ff00', '#00ffe0', '#2b65ff', '#8000ff'];
+
+    window.addEventListener('mousemove', (e) => {
+      trail.push({
+        x: e.clientX,
+        y: e.clientY,
+        size: 10 + Math.random() * 10,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        alpha: 1
+      });
+    });
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < trail.length; i++) {
+        const dot = trail[i];
+        ctx.globalAlpha = dot.alpha;
+        ctx.fillStyle = dot.color;
+        ctx.fillRect(dot.x, dot.y, dot.size, dot.size);
+        dot.alpha -= 0.02;
+        if (dot.alpha <= 0) {
+          trail.splice(i, 1);
+          i--;
+        }
+      }
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
